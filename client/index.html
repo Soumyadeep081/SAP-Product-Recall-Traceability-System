@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAP S/4HANA AI Procurement Intelligence & PO Management System</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- SAP FIORI SHELL HEADER -->
+  <header class="sap-fiori-header">
+    <div class="header-left">
+      <div class="sap-logo-badge">
+        <span class="sap-logo-text">SAP</span>
+        <span class="sap-sub-text">S/4HANA</span>
+      </div>
+      <div class="system-title">
+        <h1>Procurement Intelligence & PO Management</h1>
+        <span class="system-subtitle">ABAP Core + RAP OData + Grounded RAG Assistant</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="ai-toggle-btn" id="toggleAiDrawer">
+        <span class="sparkle-icon">✨</span>
+        <span>AI Procurement Assistant</span>
+      </button>
+      <div class="user-profile">
+        <div class="user-avatar">PM</div>
+        <div class="user-info">
+          <span class="user-name">Procurement Manager</span>
+          <span class="user-role">SAP MM / S/4HANA</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="sap-tab-bar">
+    <button class="tab-btn active" data-tab="dashboard">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      <span>Dashboard KPIs</span>
+    </button>
+    <button class="tab-btn" data-tab="polist">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+      <span>Purchase Orders</span>
+    </button>
+    <button class="tab-btn" data-tab="vendors">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>Vendor Scorecards</span>
+    </button>
+    <button class="tab-btn" data-tab="abap-docs">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+      <span>ABAP Architecture & Code</span>
+    </button>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <main class="main-container">
+
+    <!-- VIEW 1: DASHBOARD KPIS -->
+    <section class="tab-content active" id="view-dashboard">
+      <div class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-header">
+            <span class="kpi-title">TOTAL PURCHASE ORDERS</span>
+            <span class="kpi-icon">📋</span>
+          </div>
+          <div class="kpi-value" id="kpi-total-pos">--</div>
+          <div class="kpi-footer">Active in SAP S/4HANA (`ZPO_HEADER`)</div>
+        </div>
+
+        <div class="kpi-card danger">
+          <div class="kpi-header">
+            <span class="kpi-title">DELAYED POS (> 2 DAYS)</span>
+            <span class="kpi-icon">⚠️</span>
+          </div>
+          <div class="kpi-value" id="kpi-delayed-pos">--</div>
+          <div class="kpi-footer">Exceeded expected delivery date</div>
+        </div>
+
+        <div class="kpi-card success">
+          <div class="kpi-header">
+            <span class="kpi-title">ON-TIME DELIVERY RATE</span>
+            <span class="kpi-icon">🎯</span>
+          </div>
+          <div class="kpi-value" id="kpi-ontime-rate">--%</div>
+          <div class="kpi-footer">SLA Target: >= 90.0%</div>
+        </div>
+
+        <div class="kpi-card warning">
+          <div class="kpi-header">
+            <span class="kpi-title">HIGH RISK VENDORS</span>
+            <span class="kpi-icon">🚨</span>
+          </div>
+          <div class="kpi-value" id="kpi-high-risk">--</div>
+          <div class="kpi-footer">Requires CAP & Executive Review</div>
+        </div>
+      </div>
+
+      <!-- RECENT DELAYED ORDERS BANNER -->
+      <div class="section-card">
+        <div class="card-header">
+          <h2>Critical Procurement Alerts & Delayed PO Highlights</h2>
+          <span class="badge danger-badge">Action Required</span>
+        </div>
+        <div class="alert-banner">
+          <div class="alert-icon">⚡</div>
+          <div class="alert-body">
+            <strong>System Notice (RAG Grounded Analysis):</strong> PO 45000103 from vendor <em>Global Logistics & Steel Corp (V003)</em> has experienced a severe <strong>7-day delivery delay</strong>. Pursuant to Enterprise Procurement Policy Section 3, penalty deduction of 1.5%/week applies.
+          </div>
+          <div class="alert-actions" style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary" onclick="askAiAboutPo('45000103')">Analyze PO with AI</button>
+            <button class="btn btn-primary" onclick="exportPoPenaltyReport('45000103')">📄 Export Penalty PDF</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: PURCHASE ORDERS LIST -->
+    <section class="tab-content" id="view-polist">
+      <div class="section-card">
+        <div class="table-toolbar">
+          <div class="toolbar-left">
+            <h2>Purchase Orders Directory</h2>
+            <span class="record-counter" id="po-count">Showing 0 records</span>
+          </div>
+          <div class="toolbar-right">
+            <div class="filter-group">
+              <label>Status Filter:</label>
+              <select id="statusFilter">
+                <option value="ALL">All Statuses</option>
+                <option value="DELAYED">Delayed Orders Only</option>
+                <option value="ON_TIME">On-Time Orders Only</option>
+              </select>
+            </div>
+            <div class="search-box">
+              <input type="text" id="searchInput" placeholder="Search by PO ID or Vendor Name...">
+            </div>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="sap-table">
+            <thead>
+              <tr>
+                <th>PO ID</th>
+                <th>Vendor</th>
+                <th>PO Date</th>
+                <th>Expected Date</th>
+                <th>Actual GR Date</th>
+                <th>Delay (Days)</th>
+                <th>Total Amount</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="poTableBody">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: VENDOR SCORECARDS -->
+    <section class="tab-content" id="view-vendors">
+      <div class="section-card">
+        <div class="card-header">
+          <h2>Vendor Performance Scorecards (`ZVENDOR_SCORE`)</h2>
+          <span class="badge info-badge">S/4HANA Vendor Analytics</span>
+        </div>
+        <div class="vendor-grid" id="vendorGrid">
+          <!-- Dynamically Populated Cards -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: ABAP ARCHITECTURE & CODE -->
+    <section class="tab-content" id="view-abap-docs">
+      <div class="section-card">
+        <div class="card-header">
+          <h2>SAP S/4HANA Core Artifacts & Source Code</h2>
+          <p>Inspect custom DDIC definitions, OO ABAP logic, CDS views, and RAP Service Definitions built for this project.</p>
+        </div>
+
+        <div class="code-viewer-tabs">
+          <button class="code-tab-btn active" data-code="ddic">ZDDIC_DEFINITIONS.abap</button>
+          <button class="code-tab-btn" data-code="oo">ZCL_PROCUREMENT_ANALYSIS.abap</button>
+          <button class="code-tab-btn" data-code="cds1">ZI_PROCUREMENT_DATA.cds</button>
+          <button class="code-tab-btn" data-code="cds2">ZC_PROCUREMENT_ANALYTICS.cds</button>
+          <button class="code-tab-btn" data-code="rap">ZUI_PROCUREMENT_ANALYTICS.srvd</button>
+        </div>
+
+        <div class="code-display-box">
+          <pre><code id="codeViewer">-- Select a file tab above to view ABAP source code --</code></pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- AI PROCUREMENT ASSISTANT DRAWER -->
+  <aside class="ai-drawer" id="aiDrawer">
+    <div class="drawer-header">
+      <div class="drawer-title">
+        <span class="bot-avatar">🤖</span>
+        <div>
+          <h3>SAP AI Procurement Assistant</h3>
+          <span class="rag-status">● Grounded RAG + SAP S/4HANA Database Live</span>
+        </div>
+      </div>
+      <button class="close-btn" id="closeAiDrawer">&times;</button>
+    </div>
+
+    <!-- PRESET PROMPT PILLS -->
+    <div class="prompt-pills">
+      <button class="pill" onclick="sendPresetQuery('Why was PO 45000103 delayed?')">Why was PO 45000103 delayed?</button>
+      <button class="pill" onclick="sendPresetQuery('What penalties apply to vendor V003 according to policy?')">Penalty policy for V003?</button>
+      <button class="pill" onclick="sendPresetQuery('Which vendors are tagged as HIGH RISK and why?')">Which vendors are HIGH RISK?</button>
+    </div>
+
+    <!-- CHAT MESSAGES LOG -->
+    <div class="chat-log" id="chatLog">
+      <div class="chat-msg bot">
+        <div class="msg-bubble">
+          👋 Hello! I am your <strong>SAP AI Procurement Intelligence Assistant</strong>.
+          I can analyze PO statuses, calculate delivery delays, retrieve procurement policy guidelines, and evaluate vendor risk levels.
+          <br><br>
+          <em>Ask me any question such as: "Why was PO 45000103 delayed?" or "What is the penalty for 7 days delay?"</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT INPUT AREA -->
+    <div class="chat-input-area">
+      <form id="chatForm">
+        <input type="text" id="chatInput" placeholder="Ask about a PO, Vendor, or Policy..." autocomplete="off">
+        <button type="submit" class="send-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- PO DETAIL MODAL -->
+  <div class="modal-overlay" id="poModal" onclick="if(event.target === this) closeModal()">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalPoTitle">Purchase Order Details</h3>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalPoContent">
+        <!-- Loaded via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING AI FAB FOR MOBILE -->
+  <button class="ai-fab-btn" id="mobileAiFab" onclick="toggleAiDrawerFromFab()">
+    <span class="sparkle-icon">✨</span>
+    <span>AI Assistant</span>
+  </button>
+
+  <script src="app.js"></script>
+</body>
+</html>
