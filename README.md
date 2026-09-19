@@ -17,9 +17,7 @@ The **SAP Product Recall & Traceability System** is an enterprise-grade ERP arch
 | :--- | :--- |
 | **Project Title** | SAP Product Recall & Traceability System |
 | **Subtitle** | An Intelligent ERP Solution for End-to-End Product Tracking and Automated Recall Management |
-| **Contributors** | **Vaibhav Tripathi** (Univ Roll No: `2301921520201`)<br>**Soumyadeep Dafadaar** (Univ Roll No: `2301921520187`) |
-| **Faculty Mentor** | **Ms. Sugandhi Ma'am** |
-| **Institution** | **GL Bajaj Institute of Technology and Management** |
+| **Contributors** | **Soumyadeep Dafadaar** |
 | **Domain** | Enterprise Resource Planning (ERP), Supply Chain Management (SCM), SAP S/4HANA |
 
 ---
